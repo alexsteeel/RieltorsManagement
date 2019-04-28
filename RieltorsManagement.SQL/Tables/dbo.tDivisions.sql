@@ -13,7 +13,7 @@ go
 create table dbo.tDivisions
 (
 	Id			int				not null identity(1, 1),
-	Name		varchar(200)	not null,
+	Name		varchar(200)	not null unique,
 	CreatedDateTime datetime	not null,
 	constraint pk_Divisions_Id
 		primary key clustered (Id)
