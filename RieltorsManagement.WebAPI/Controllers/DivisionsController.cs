@@ -31,6 +31,11 @@ namespace RieltorsManagement.WebAPI
             result = divisions.Where(x => x.Name.Contains(name ?? "")).
                 ToList();
 
+            if (!page.HasValue)
+            {
+                return result;
+            }
+
             return result.Skip(((int)page - 1) * (int)pageSize).
                 Take((int)pageSize).
                 ToList();

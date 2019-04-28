@@ -31,6 +31,11 @@ namespace RieltorsManagement.WebAPI
             result = rieltors.Where(x => x.LastName.Contains(lastName ?? "") && x.Division.Contains(division ?? "")).
                 ToList();
 
+            if (!page.HasValue)
+            {
+                return result;
+            }
+
             return result.Skip(((int)page - 1) * (int)pageSize).
                 Take((int)pageSize).
                 ToList();
