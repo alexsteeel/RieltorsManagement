@@ -5,7 +5,7 @@
 
 Первичная настройка:
 
-Выполнить скрипт наката из UpScript.sql RieltorsManagement.SQL (если таблицы будут накатываться существующую БД, изменить название БД в строчке use RieltorDB, если необходимо создать новую, раскомментировать строчку create database RieltorDB;);
+Выполнить скрипт наката из UpScript.sql RieltorsManagement.SQL (если таблицы будут накатываться существующую БД, то изменить название БД в строчке use RieltorDB, иначе для создания новой БД раскомментировать строчку create database RieltorDB;);
 
 В решении RieltorsManagement.WebAPI в файле appsettings.json изменить строку подключения DefaultConnection.
 
