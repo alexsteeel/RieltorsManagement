@@ -28,7 +28,7 @@ namespace RieltorsManagement.DAL
         /// Наименование.
         /// </summary>
         [Required]
-        [StringLength(100)]
+        [StringLength(200)]
         public string Name { get; set; }
 
         /// <summary>

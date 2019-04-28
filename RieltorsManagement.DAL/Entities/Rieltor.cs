@@ -30,14 +30,14 @@ namespace RieltorsManagement.DAL
         /// Имя.
         /// </summary>
         [Required]
-        [StringLength(100)]
+        [StringLength(200)]
         public string FirstName { get; set; }
 
         /// <summary>
         /// Фамилия.
         /// </summary>
         [Required]
-        [StringLength(100)]
+        [StringLength(200)]
         public string LastName { get; set; }
 
         /// <summary>
