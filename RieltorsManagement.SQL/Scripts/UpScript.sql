@@ -1,4 +1,4 @@
-create database RieltorDB;
+--create database RieltorDB;
 
 go
 
@@ -65,3 +65,28 @@ inner join
 	on d.Id = a.DivisionId;
 
 go
+
+-- Внесение тестовых данных в таблицу с подразделениями.
+insert into
+	dbo.tDivisions
+(Name, CreatedDateTime)
+values
+	('Отдел 1', getdate()),
+	('Отдел 2', getdate()),
+	('Сектор 1', getdate());
+
+-- Внесение тестовых данных в таблицу с риэлторами.
+insert into
+	dbo.tRieltors
+(
+	Firstname,		
+	Lastname,	
+	DivisionId,	
+	CreatedDateTime
+)
+values
+	('Василий', 'Иванов', 1, getdate()),
+	('Василий', 'Семенов', 1, getdate()),
+	('Иван', 'Иванов', 1, getdate()),
+	('Татьяна', 'Сидорова', 2, getdate()),
+	('Евгений', 'Мартынов', 3, getdate());
