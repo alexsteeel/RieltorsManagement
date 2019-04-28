@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Список риэлторов</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <style>
+        body {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Список риэлторов</h2>
+    <form name="rieltorForm">
+
+        <input type="hidden"
+               name="id"
+               value="0" />
+
+        <div class="form-group">
+            <label for="lastName">Фамилия:</label>
+            <input class="form-control" name="lastName" />
+        </div>
+        <div class="form-group">
+            <label for="firstName">Имя:</label>
+            <input class="form-control" name="firstName" />
+        </div>
+        <div class="form-group">
+            <label for="division">Подразделение:</label>
+            <input class="form-control" name="division" />
+        </div>
+
+        <input type="hidden"
+               name="createdDateTime" />        
+
+        <div class="panel-body">
+            <button type="submit" class="btn btn-sm btn-primary">Сохранить</button>
+            <a id="reset" class="btn btn-sm btn-primary">Сбросить</a>
+        </div>
+    </form>
+
+    <table class="table table-condensed table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Фамилия</th>
+                <th>Имя</th>
+                <th>Подразделение</th>
+                <th>Дата создания</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+
+        // Получение всех риэлторов.
+        function GetRieltors()
+        {
+            $.ajax({
+                url: '/api/rieltors',
+                type: 'GET',
+                contentType: "application/json",
+                success: function (rieltors)
+                {
+                    var rows = "";
+                    $.each(rieltors, function (index, rieltor) {
+                        // добавляем полученные элементы в таблицу
+                        rows += row(rieltor);
+                    })
+                    $("table tbody").append(rows);
+                }
+            });
+        }
+
+        // Получение одного риэлтора
+        function GetRieltor(id)
+        {
+            $.ajax({
+                url: '/api/rieltors/' + id,
+                type: 'GET',
+                contentType: "application/json",
+                success: function (rieltor)
+                {
+                    var form = document.forms["rieltorForm"];
+                    form.elements["id"].value = rieltor.id;
+                    form.elements["lastName"].value = rieltor.lastName;
+                    form.elements["firstName"].value = rieltor.firstName;                    
+                    form.elements["division"].value = rieltor.division;
+                    form.elements["createdDateTime"].value = rieltor.createdDateTime;
+                }
+            });
+        }
+
+        // Добавление риэлтора
+        function CreateRieltor(lastName, firstName, division)
+        {
+            $.ajax({
+                url: "api/rieltors",
+                contentType: "application/json",
+                method: "POST",
+                data: JSON.stringify({
+                    lastName: lastName,
+                    firstName: firstName,
+                    division: division
+                }),
+                success: function (rieltor) {
+                    reset();
+                    $("table tbody").append(row(rieltor));
+                }
+            })
+        }
+
+        // Изменение риэлтора
+        function EditRieltor(rieltorId, rieltorLastName, rieltorFirstName, rieltorDivision, rieltorCreatedDateTime)
+        {
+            $.ajax({
+                url: "api/rieltors",
+                contentType: "application/json",
+                method: "PUT",
+                data: JSON.stringify({
+                    id: rieltorId,
+                    lastName: rieltorLastName,
+                    firstName: rieltorFirstName,
+                    division: rieltorDivision,
+                    createdDateTime: rieltorCreatedDateTime
+                }),
+                success: function (rieltor) {
+                    reset();
+                    $("tr[data-rowid='" + rieltor.id + "']").replaceWith(row(rieltor));
+                }
+            })
+        }
+
+        // сброс формы
+        function reset()
+        {
+            var form = document.forms["rieltorForm"];
+            form.reset();
+            form.elements["id"].value = 0;
+        }
+
+        // Удаление риэлтора
+        function DeleteRieltor(id)
+        {
+            $.ajax({
+                url: "api/rieltors/" + id,
+                contentType: "application/json",
+                method: "DELETE",
+                success: function (id) {
+                    $("tr[data-rowid='" + id + "']").remove();
+                }
+            })
+        }
+
+        // создание строки для таблицы
+        var row = function (rieltor)
+        {
+            return "<tr data-rowid='" + rieltor.id + "'>"
+                + "<td>" + rieltor.id + "</td>"
+                + "<td>" + rieltor.lastName + "</td>"
+                + "<td>" + rieltor.firstName + "</td>"
+                + "<td>" + rieltor.division + "</td>"
+                + "<td>" + rieltor.createdDateTime + "</td>"
+                + "<td><a class='editLink' data-id='" + rieltor.id + "'> Изменить</a> | " +
+                "<a class='removeLink' data-id='" + rieltor.id + "'>Удалить</a></td></tr>";
+        }
+
+        // сброс значений формы
+        $("#reset").click(function (e)
+        {
+            e.preventDefault();
+            reset();
+        })
+
+        // отправка формы
+        $("form").submit(function (e) {
+            e.preventDefault();
+            var id = this.elements["id"].value;
+            var lastName = this.elements["lastName"].value;
+            var firstName = this.elements["firstName"].value;
+            var division = this.elements["division"].value;
+            var createdDateTime = this.elements["createdDateTime"].value;
+            if (id == 0)
+                CreateRieltor(lastName, firstName, division);
+            else
+                EditRieltor(id, lastName, firstName, division, createdDateTime);
+        });
+
+        // нажимаем на ссылку Изменить
+        $("body").on("click", ".editLink", function () {
+            var id = $(this).data("id");
+            GetRieltor(id);
+        })
+
+        // нажимаем на ссылку Удалить
+        $("body").on("click", ".removeLink", function () {
+            var id = $(this).data("id");
+            DeleteRieltor(id);
+        })
+
+        // загрузка пользователей
+        GetRieltors();
+
+    </script>
+</body>
+</html>
